@@ -22,7 +22,16 @@ func main() {
 	bondService := services.NewBondService(bondRepo)
 	bondHandler := handlers.NewBondHandler(bondService)
 
-	routes.RegisterRoutes(router, bondHandler)
+	wishlistRepo := repository.NewWishlistRepository(db)
+	wishlistService := services.NewWishlistService(
+		wishlistRepo,
+		bondRepo,
+	)
+	wishlistHandler := handlers.NewWishlistHandler(
+		wishlistService,
+	)
+
+	routes.RegisterRoutes(router, bondHandler, wishlistHandler)
 
 	log.Println("Hercules is running")
 	router.Run(":" + config.App.Port)

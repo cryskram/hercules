@@ -5,13 +5,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(router *gin.Engine, bondHandler *handlers.BondHandler) {
+func RegisterRoutes(router *gin.Engine, bondHandler *handlers.BondHandler, wishlistHandler *handlers.WishlistHandler) {
 	api := router.Group("/api")
 	{
+
 		bonds := api.Group("/bonds")
 		{
 			bonds.GET("", bondHandler.GetAll)
 			bonds.GET("/:isin", bondHandler.GetByISIN)
+		}
+
+		wishlists := api.Group("/wishlists")
+		{
+			wishlists.GET("", wishlistHandler.GetAll)
+			wishlists.POST("", wishlistHandler.Create)
+			wishlists.GET("/:id", wishlistHandler.GetByID)
+			wishlists.PATCH("/:id", wishlistHandler.Update)
+			wishlists.DELETE("/:id", wishlistHandler.Delete)
+			wishlists.GET("/:id/bonds", wishlistHandler.GetWishlistBonds)
+			wishlists.POST("/:id/bonds", wishlistHandler.AddBond)
+			wishlists.DELETE("/:id/bonds/:isin", wishlistHandler.RemoveBond)
 		}
 	}
 }
