@@ -287,3 +287,21 @@ GET /api/bonds?page=1&limit=20&sort=yield&order=desc&rating=AAA
 ### Excel Parsing
 
 - excelize
+
+# Testing
+
+The repository contains a `requests.http` file with ready-to-use API requests for:
+
+- Health Check
+- Get Bonds
+- Search Bonds
+- Filter Bonds
+- Pagination
+- Sorting
+- Create Wishlist
+- Update Wishlist
+- Delete Wishlist
+- Add Bond to Wishlist
+- Remove Bond from Wishlist
+
+The requests can be executed directly from VS Code using the REST Client extension.

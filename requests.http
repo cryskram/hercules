@@ -1,0 +1,114 @@
+@baseUrl = http://localhost:8080
+@bondIsin = INE926R07035
+@wishlistId = 0f6a3586-5d35-4451-8965-e68b9dc1ea16
+
+### Health
+GET {{baseUrl}}/health
+
+### Get All Bonds
+GET {{baseUrl}}/api/bonds
+
+### Pagination
+GET {{baseUrl}}/api/bonds?page=1&limit=20
+
+### Search Bonds
+GET {{baseUrl}}/api/bonds?search=Kosamattam
+
+### Search by ISIN
+GET {{baseUrl}}/api/bonds?search=INE926R07035
+
+### Filter by Rating
+GET {{baseUrl}}/api/bonds?rating=BBB
+
+### Filter by Sector
+GET {{baseUrl}}/api/bonds?sector="NBFC / Financial Services"
+
+### Filter by Coupon Type
+GET {{baseUrl}}/api/bonds?coupon_type=Fixed
+
+### Filter by Nature
+GET {{baseUrl}}/api/bonds?nature=Secured
+
+### Filter by Payout Frequency
+GET {{baseUrl}}/api/bonds?payout_frequency=Monthly
+
+### Sort by Yield (DESC)
+GET {{baseUrl}}/api/bonds?sort=yield&order=desc
+
+### Sort by Yield (ASC)
+GET {{baseUrl}}/api/bonds?sort=yield&order=asc
+
+### Sort by Maturity
+GET {{baseUrl}}/api/bonds?sort=maturity
+
+### Sort by Rating
+GET {{baseUrl}}/api/bonds?sort=rating
+
+### Sort by Name
+GET {{baseUrl}}/api/bonds?sort=name
+
+### Combined Query
+GET {{baseUrl}}/api/bonds?page=1&limit=10&rating=AAA&sort=yield&order=desc
+
+### Get Bond By ISIN
+GET {{baseUrl}}/api/bonds/{{bondIsin}}
+
+### Create Wishlist
+POST {{baseUrl}}/api/wishlists
+Content-Type: application/json
+
+{
+  "name": "High Yield",
+  "description": "Highest yielding bonds",
+  "color": "#3B82F6"
+}
+
+### Get All Wishlists
+GET {{baseUrl}}/api/wishlists
+
+### Get Wishlist
+GET {{baseUrl}}/api/wishlists/{{wishlistId}}
+
+### Update Wishlist
+PATCH {{baseUrl}}/api/wishlists/{{wishlistId}}
+Content-Type: application/json
+
+{
+  "name": "Retirement Portfolio",
+  "description": "Long term investments",
+  "color": "#10B981"
+}
+
+### Add Bond to Wishlist
+POST {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds
+Content-Type: application/json
+
+{
+  "isin": "{{bondIsin}}"
+}
+
+### Get Wishlist Bonds
+GET {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds
+
+### Remove Bond from Wishlist
+DELETE {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds/{{bondIsin}}
+
+### Delete Wishlist
+DELETE {{baseUrl}}/api/wishlists/{{wishlistId}}
+
+### Invalid Page
+GET {{baseUrl}}/api/bonds?page=-1
+
+### Invalid ISIN
+GET {{baseUrl}}/api/bonds/INVALIDISIN
+
+### Invalid Wishlist
+GET {{baseUrl}}/api/wishlists/00000000-0000-0000-0000-000000000000
+
+### Add Duplicate Bond
+POST {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds
+Content-Type: application/json
+
+{
+  "isin": "{{bondIsin}}"
+}
