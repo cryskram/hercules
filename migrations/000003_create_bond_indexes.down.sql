@@ -1,0 +1,9 @@
+DROP INDEX IF EXISTS idx_bonds_brand_name;
+DROP INDEX IF EXISTS idx_bonds_sector;
+DROP INDEX IF EXISTS idx_bonds_rating;
+DROP INDEX IF EXISTS idx_bonds_yield;
+DROP INDEX IF EXISTS idx_bonds_maturity;
+DROP INDEX IF EXISTS idx_bonds_coupon_type;
+DROP INDEX IF EXISTS idx_bonds_payout_frequency;
+DROP INDEX IF EXISTS idx_bonds_nature;
+DROP INDEX IF EXISTS idx_bonds_is_active;
