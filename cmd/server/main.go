@@ -2,36 +2,20 @@ package main
 
 import (
 	"log"
-	"net/http"
-	"os"
 
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"github.com/cryskram/hercules/internal/config"
+	"github.com/cryskram/hercules/internal/database"
+	"github.com/cryskram/hercules/internal/routes"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env")
-	}
+	config.Load()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	db := database.Connect()
 
-	router := gin.Default()
+	router := routes.SetupRoutes(db)
 
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "hello world",
-			"status":  "running",
-		})
-	})
+	log.Printf("Hercules API is running on :%s", config.App.Port)
 
-	log.Print("Hercules is running")
-
-	if err := router.Run(":" + port); err != nil {
-		log.Fatal(err)
-	}
-
+	router.Run(":" + config.App.Port)
 }
