@@ -5,17 +5,25 @@ import (
 
 	"github.com/cryskram/hercules/internal/config"
 	"github.com/cryskram/hercules/internal/database"
+	"github.com/cryskram/hercules/internal/handlers"
+	repository "github.com/cryskram/hercules/internal/repositories"
 	"github.com/cryskram/hercules/internal/routes"
+	"github.com/cryskram/hercules/internal/services"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	config.Load()
 
 	db := database.Connect()
+	router := gin.Default()
 
-	router := routes.SetupRoutes(db)
+	bondRepo := repository.NewBondRepository(db)
+	bondService := services.NewBondService(bondRepo)
+	bondHandler := handlers.NewBondHandler(bondService)
 
-	log.Printf("Hercules API is running on :%s", config.App.Port)
+	routes.RegisterRoutes(router, bondHandler)
 
+	log.Println("Hercules is running")
 	router.Run(":" + config.App.Port)
 }
