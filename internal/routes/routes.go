@@ -6,6 +6,8 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine, bondHandler *handlers.BondHandler, wishlistHandler *handlers.WishlistHandler) {
+	router.GET("/health", handlers.Health)
+
 	api := router.Group("/api")
 	{
 

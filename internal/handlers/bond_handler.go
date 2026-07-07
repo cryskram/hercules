@@ -6,6 +6,7 @@ import (
 
 	"github.com/cryskram/hercules/internal/dto"
 	"github.com/cryskram/hercules/internal/services"
+	"github.com/cryskram/hercules/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,13 +47,15 @@ func (h *BondHandler) GetAll(c *gin.Context) {
 	response, err := h.service.GetAll(filter)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	utils.OK(c, response)
 }
 
 // GET /api/bonds/:isin
@@ -68,5 +71,5 @@ func (h *BondHandler) GetByISIN(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, bond)
+	utils.OK(c, bond)
 }

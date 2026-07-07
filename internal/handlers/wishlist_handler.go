@@ -5,6 +5,7 @@ import (
 
 	"github.com/cryskram/hercules/internal/dto"
 	"github.com/cryskram/hercules/internal/services"
+	"github.com/cryskram/hercules/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,13 +26,15 @@ func (h *WishlistHandler) GetAll(c *gin.Context) {
 	wishlists, err := h.service.GetAll()
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
-	c.JSON(http.StatusOK, wishlists)
+	utils.OK(c, wishlists)
 }
 
 // GET /api/wishlists/:id
@@ -48,7 +51,7 @@ func (h *WishlistHandler) GetByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, wishlist)
+	utils.OK(c, wishlist)
 }
 
 // POST /api/wishlists
@@ -65,9 +68,11 @@ func (h *WishlistHandler) Create(c *gin.Context) {
 	err := h.service.Create(req)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
@@ -92,15 +97,19 @@ func (h *WishlistHandler) Update(c *gin.Context) {
 	err := h.service.Update(id, req)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Wishlist updated successfully",
-	})
+	utils.Message(
+		c,
+		http.StatusCreated,
+		"Wishlist created successfully",
+	)
 }
 
 // DELETE /api/wishlists/:id
@@ -109,15 +118,19 @@ func (h *WishlistHandler) Delete(c *gin.Context) {
 	err := h.service.Delete(id)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Wishlist deleted successfully",
-	})
+	utils.Message(
+		c,
+		http.StatusCreated,
+		"Wishlist deleted successfully",
+	)
 }
 
 // GET /api/wishlists/:id/bonds
@@ -126,9 +139,11 @@ func (h *WishlistHandler) GetWishlistBonds(c *gin.Context) {
 	bonds, err := h.service.GetWishlistBonds(id)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
@@ -153,9 +168,11 @@ func (h *WishlistHandler) AddBond(c *gin.Context) {
 	err := h.service.AddBond(id, body.ISIN)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 		return
 	}
 
@@ -171,14 +188,18 @@ func (h *WishlistHandler) RemoveBond(c *gin.Context) {
 	err := h.service.RemoveBond(id, isin)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		utils.Error(
+			c,
+			http.StatusInternalServerError,
+			err.Error(),
+		)
 
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Bond removed successfully",
-	})
+	utils.Message(
+		c,
+		http.StatusCreated,
+		"Bond removed successfully",
+	)
 }

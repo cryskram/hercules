@@ -18,6 +18,9 @@ func main() {
 	db := database.Connect()
 	router := gin.Default()
 
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
 	bondRepo := repository.NewBondRepository(db)
 	bondService := services.NewBondService(bondRepo)
 	bondHandler := handlers.NewBondHandler(bondService)
