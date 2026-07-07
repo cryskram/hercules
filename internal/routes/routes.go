@@ -1,12 +1,18 @@
 package routes
 
 import (
+	"net/http"
+
 	"github.com/cryskram/hercules/internal/handlers"
+	"github.com/cryskram/hercules/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(router *gin.Engine, bondHandler *handlers.BondHandler, wishlistHandler *handlers.WishlistHandler) {
 	router.GET("/health", handlers.Health)
+	router.GET("/", func(c *gin.Context) {
+		utils.Message(c, http.StatusOK, "Welcome to hercules")
+	})
 
 	api := router.Group("/api")
 	{
