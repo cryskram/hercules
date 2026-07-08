@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/cryskram/hercules/internal/dto"
 	"github.com/cryskram/hercules/internal/models"
@@ -46,6 +47,13 @@ func NewWishlistService(
 func (s *wishlistService) Create(
 	req dto.CreateWishlistRequest,
 ) error {
+
+	req.Name = strings.TrimSpace(req.Name)
+
+	if req.Name == "" {
+		return errors.New("wishlist name cannot be empty")
+	}
+
 	count, err := s.wishlistRepo.Count()
 	if err != nil {
 		return err
@@ -55,10 +63,20 @@ func (s *wishlistService) Create(
 		return errors.New("maximum of 5 wishlists allowed")
 	}
 
+	exists, err := s.wishlistRepo.ExistsByName(req.Name)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return errors.New("wishlist with this name already exists")
+	}
+
 	wishlist := models.Wishlist{
 		Name:        req.Name,
 		Description: req.Description,
 		Color:       req.Color,
+		IsDefault:   count == 0,
 	}
 
 	return s.wishlistRepo.Create(&wishlist)
@@ -94,6 +112,19 @@ func (s *wishlistService) AddBond(
 	_, err := s.wishlistRepo.GetByID(wishlistID)
 	if err != nil {
 		return err
+	}
+
+	exists, err := s.wishlistRepo.ExistsBondInWishlist(
+		wishlistID,
+		bondISIN,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return errors.New("bond already exists in this wishlist")
 	}
 
 	count, err := s.wishlistRepo.GetBondCount(wishlistID)
@@ -195,6 +226,22 @@ func (s *wishlistService) Update(
 	}
 
 	if req.Name != "" {
+
+		req.Name = strings.TrimSpace(req.Name)
+
+		if req.Name == "" {
+			return errors.New("wishlist name cannot be empty")
+		}
+
+		exists, err := s.wishlistRepo.ExistsByNameExceptID(req.Name, id)
+		if err != nil {
+			return err
+		}
+
+		if exists {
+			return errors.New("wishlist with this name already exists")
+		}
+
 		wishlist.Name = req.Name
 	}
 

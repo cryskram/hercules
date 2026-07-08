@@ -1,0 +1,1 @@
+ALTER TABLE wishlists DROP CONSTRAINT unique_wishlist_name;

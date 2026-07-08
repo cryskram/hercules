@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"math"
 
 	"github.com/cryskram/hercules/internal/dto"
@@ -30,11 +31,11 @@ func (s *bondService) GetByISIN(isin string) (*models.Bond, error) {
 func (s *bondService) GetAll(filter dto.BondFilter) (*dto.PaginatedResponse[models.Bond], error) {
 
 	if filter.Page <= 0 {
-		filter.Page = 1
+		return nil, errors.New("page must be greater than 0")
 	}
 
 	if filter.Limit <= 0 {
-		filter.Limit = 20
+		return nil, errors.New("limit cannot be negative or 0")
 	}
 
 	if filter.Limit > 100 {

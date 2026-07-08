@@ -7,6 +7,7 @@ type Wishlist struct {
 	Name        string    `gorm:"column:name"`
 	Description *string   `gorm:"column:description"`
 	Color       *string   `gorm:"column:color"`
+	IsDefault   bool      `gorm:"column:is_default;default:false"`
 	CreatedAt   time.Time `gorm:"column:created_at"`
 	UpdatedAt   time.Time `gorm:"column:updated_at"`
 }

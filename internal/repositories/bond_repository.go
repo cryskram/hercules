@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/cryskram/hercules/internal/dto"
@@ -69,6 +70,12 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 		query = query.Where("payout_frequency = ?", filter.PayoutFrequency)
 	}
 
+	if filter.PrincipalFrequency != "" {
+		query = query.Where("principal_frequency = ?",
+			filter.PrincipalFrequency,
+		)
+	}
+
 	if filter.Search != "" {
 
 		search := "%" + filter.Search + "%"
@@ -89,11 +96,11 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 	}
 
 	if filter.Page <= 0 {
-		return nil, 0, fmt.Errorf("page must be greater than 0")
+		return nil, 0, errors.New("page must be greater than 0")
 	}
 
 	if filter.Limit <= 0 {
-		filter.Limit = 20
+		return nil, 0, errors.New("limit cannot be negative or 0")
 	}
 
 	if filter.Limit > 100 {
@@ -123,6 +130,7 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 	}
 
 	if filter.Sort == "rating" {
+
 		ratingOrder := `
 			CASE rating
 				WHEN 'Sovereign' THEN 1
@@ -145,9 +153,28 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 				ELSE 999
 			END
 			`
+
 		query = query.Order(fmt.Sprintf("%s %s", ratingOrder, order))
+
+	}
+
+	if filter.Sort == "principal_frequency" {
+
+		principalOrder := `
+			CASE principal_frequency
+				WHEN 'Monthly' THEN 1
+				WHEN 'Quarterly' THEN 2
+				WHEN 'Semi Annually' THEN 3
+				WHEN 'Annual' THEN 4
+				ELSE 999
+			END
+			`
+		query = query.Order(fmt.Sprintf("%s %s", principalOrder, order))
+
 	} else {
+
 		query = query.Order(fmt.Sprintf("%s %s", sortColumn, order))
+
 	}
 	err := query.
 		Offset((filter.Page - 1) * filter.Limit).

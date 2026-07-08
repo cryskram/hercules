@@ -3,7 +3,6 @@ package repository
 import (
 	"github.com/cryskram/hercules/internal/models"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type WishlistRepository interface {
@@ -17,6 +16,10 @@ type WishlistRepository interface {
 	GetWishlistBonds(wishlistID string) ([]models.Bond, error)
 	GetBondCount(wishlistID string) (int64, error)
 	Count() (int64, error)
+	GetDefault() (*models.Wishlist, error)
+	ExistsByName(name string) (bool, error)
+	ExistsByNameExceptID(name, id string) (bool, error)
+	ExistsBondInWishlist(wishlistID, bondISIN string) (bool, error)
 }
 
 type wishlistRepository struct {
@@ -27,6 +30,76 @@ func NewWishlistRepository(db *gorm.DB) WishlistRepository {
 	return &wishlistRepository{
 		db: db,
 	}
+}
+
+func (r *wishlistRepository) ExistsBondInWishlist(
+	wishlistID string,
+	bondISIN string,
+) (bool, error) {
+
+	var count int64
+
+	err := r.db.
+		Model(&models.WishlistBond{}).
+		Where("wishlist_id = ?", wishlistID).
+		Where("bond_isin = ?", bondISIN).
+		Count(&count).
+		Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (r *wishlistRepository) ExistsByNameExceptID(name, id string) (bool, error) {
+
+	var count int64
+
+	err := r.db.
+		Model(&models.Wishlist{}).
+		Where("LOWER(name) = LOWER(?)", name).
+		Where("id <> ?", id).
+		Count(&count).
+		Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (r *wishlistRepository) ExistsByName(name string) (bool, error) {
+
+	var count int64
+
+	err := r.db.
+		Model(&models.Wishlist{}).
+		Where("LOWER(name) = LOWER(?)", name).
+		Count(&count).
+		Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func (r *wishlistRepository) GetDefault() (*models.Wishlist, error) {
+	var wishlist models.Wishlist
+	err := r.db.
+		Where("is_default = ?", true).
+		First(&wishlist).
+		Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &wishlist, nil
 }
 
 func (r *wishlistRepository) Count() (int64, error) {
@@ -102,12 +175,7 @@ func (r *wishlistRepository) AddBond(
 		BondISIN:   bondISIN,
 	}
 
-	return r.db.
-		Clauses(clause.OnConflict{
-			DoNothing: true,
-		}).
-		Create(&item).
-		Error
+	return r.db.Create(&item).Error
 }
 
 func (r *wishlistRepository) RemoveBond(
