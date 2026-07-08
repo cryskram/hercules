@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/cryskram/hercules/internal/config"
 	"github.com/golang-migrate/migrate/v4"
@@ -24,7 +25,7 @@ func main() {
 	}
 
 	if len(os.Args) < 2 {
-		log.Fatal("Usage: go run ./cmd/migrate [up|down|version]")
+		log.Fatal("Usage: go run ./cmd/migrate [up|down|version|force <version>]")
 	}
 
 	switch os.Args[1] {
@@ -52,6 +53,22 @@ func main() {
 		}
 
 		fmt.Printf("Current Version: %d\nDirty: %v\n", v, dirty)
+	case "force":
+
+		if len(os.Args) < 3 {
+			log.Fatal("Usage: go run ./cmd/migrate force <version>")
+		}
+
+		version, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatal("Invalid migration version")
+		}
+
+		if err := m.Force(version); err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("✅ Forced migration version to %d\n", version)
 
 	default:
 		log.Fatal("Unknown command")

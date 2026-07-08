@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:8080
 @bondIsin = INE0I5X07034
-@wishlistId = 36751ecf-7386-4d90-91e8-c198c3dcc7d6
+@wishlistId = bdb9d8c3-b208-4252-8a8e-c30001f711f5
 
 ### Health
 GET {{baseUrl}}/health
@@ -58,9 +58,8 @@ POST {{baseUrl}}/api/wishlists
 Content-Type: application/json
 
 {
-  "name": "My Wishlist",
-  "description": "Highest yielding bonds",
-  "color": "#3B82F6"
+  "name": "My Wishlist 12",
+  "color": 10
 }
 
 ### Get All Wishlists
@@ -74,9 +73,7 @@ PATCH {{baseUrl}}/api/wishlists/{{wishlistId}}
 Content-Type: application/json
 
 {
-  "name": "Retirement Portfolio",
-  "description": "Long term investments",
-  "color": "#10B981"
+  "color": 1
 }
 
 ### Add Bond to Wishlist
@@ -94,7 +91,7 @@ GET {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds
 DELETE {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds/{{bondIsin}}
 
 ### Delete Wishlist
-DELETE {{baseUrl}}/api/wishlists/b5ee6052-bf22-4458-b381-ec833599182e
+DELETE {{baseUrl}}/api/wishlists/25d77859-0e96-44f4-8b5d-197d0bafc71d
 
 ### Invalid Page
 GET {{baseUrl}}/api/bonds?page=-1

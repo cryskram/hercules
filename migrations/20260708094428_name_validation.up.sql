@@ -1,0 +1,2 @@
+ALTER TABLE wishlists
+ALTER COLUMN name TYPE VARCHAR(30);

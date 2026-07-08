@@ -84,11 +84,16 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 			bond_name ILIKE ?
 			OR brand_name ILIKE ?
 			OR isin ILIKE ?
+			OR similarity(bond_name, ?) > 0.2
+			OR similarity(brand_name, ?) > 0.2
 		`,
 			search,
 			search,
 			search,
+			filter.Search,
+			filter.Search,
 		)
+
 	}
 
 	if err := query.Count(&total).Error; err != nil {
@@ -156,9 +161,7 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 
 		query = query.Order(fmt.Sprintf("%s %s", ratingOrder, order))
 
-	}
-
-	if filter.Sort == "principal_frequency" {
+	} else if filter.Sort == "principal_frequency" {
 
 		principalOrder := `
 			CASE principal_frequency

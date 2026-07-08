@@ -1,7 +1,7 @@
 package dto
 
 type UpdateWishlistRequest struct {
-	Name        string  `json:"name"`
+	Name        *string `json:"name"`
 	Description *string `json:"description"`
-	Color       *string `json:"color"`
+	Color       *int    `json:"color"`
 }

@@ -225,15 +225,15 @@ func (s *wishlistService) Update(
 		return err
 	}
 
-	if req.Name != "" {
+	if req.Name != nil {
 
-		req.Name = strings.TrimSpace(req.Name)
+		trimmedName := strings.TrimSpace(*req.Name)
 
-		if req.Name == "" {
+		if trimmedName == "" {
 			return errors.New("wishlist name cannot be empty")
 		}
 
-		exists, err := s.wishlistRepo.ExistsByNameExceptID(req.Name, id)
+		exists, err := s.wishlistRepo.ExistsByNameExceptID(trimmedName, id)
 		if err != nil {
 			return err
 		}
@@ -242,7 +242,7 @@ func (s *wishlistService) Update(
 			return errors.New("wishlist with this name already exists")
 		}
 
-		wishlist.Name = req.Name
+		wishlist.Name = trimmedName
 	}
 
 	if req.Description != nil {
