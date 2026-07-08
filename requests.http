@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:8080
-@bondIsin = INE926R07035
-@wishlistId = 0f6a3586-5d35-4451-8965-e68b9dc1ea16
+@bondIsin = INE046W07305
+@wishlistId = ded2451a-d74c-4255-b55a-bdf5d78f64c2
 
 ### Health
 GET {{baseUrl}}/health
@@ -9,7 +9,7 @@ GET {{baseUrl}}/health
 GET {{baseUrl}}/api/bonds
 
 ### Pagination
-GET {{baseUrl}}/api/bonds?page=1&limit=20
+GET {{baseUrl}}/api/bonds?page=3&limit=20
 
 ### Search Bonds
 GET {{baseUrl}}/api/bonds?search=Kosamattam
@@ -94,7 +94,7 @@ GET {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds
 DELETE {{baseUrl}}/api/wishlists/{{wishlistId}}/bonds/{{bondIsin}}
 
 ### Delete Wishlist
-DELETE {{baseUrl}}/api/wishlists/{{wishlistId}}
+DELETE {{baseUrl}}/api/wishlists/c1845c4f-c920-45d6-820c-ab118fb0c04c
 
 ### Invalid Page
 GET {{baseUrl}}/api/bonds?page=-1

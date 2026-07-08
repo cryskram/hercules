@@ -16,6 +16,7 @@ type WishlistRepository interface {
 	RemoveBond(wishlistID string, bondISIN string) error
 	GetWishlistBonds(wishlistID string) ([]models.Bond, error)
 	GetBondCount(wishlistID string) (int64, error)
+	Count() (int64, error)
 }
 
 type wishlistRepository struct {
@@ -26,6 +27,17 @@ func NewWishlistRepository(db *gorm.DB) WishlistRepository {
 	return &wishlistRepository{
 		db: db,
 	}
+}
+
+func (r *wishlistRepository) Count() (int64, error) {
+	var count int64
+
+	err := r.db.
+		Model(&models.Wishlist{}).
+		Count(&count).
+		Error
+
+	return count, err
 }
 
 func (r *wishlistRepository) Create(

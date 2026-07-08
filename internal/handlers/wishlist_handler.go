@@ -68,11 +68,13 @@ func (h *WishlistHandler) Create(c *gin.Context) {
 	err := h.service.Create(req)
 
 	if err != nil {
-		utils.Error(
-			c,
-			http.StatusInternalServerError,
-			err.Error(),
-		)
+		switch err.Error() {
+		case "maximum of 5 wishlists allowed",
+			"wishlist can contain at most 10 bonds":
+			utils.Error(c, http.StatusConflict, err.Error())
+		default:
+			utils.Error(c, http.StatusInternalServerError, err.Error())
+		}
 		return
 	}
 

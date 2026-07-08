@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/cryskram/hercules/internal/dto"
 	"github.com/cryskram/hercules/internal/models"
 	repository "github.com/cryskram/hercules/internal/repositories"
@@ -44,6 +46,14 @@ func NewWishlistService(
 func (s *wishlistService) Create(
 	req dto.CreateWishlistRequest,
 ) error {
+	count, err := s.wishlistRepo.Count()
+	if err != nil {
+		return err
+	}
+
+	if count >= 5 {
+		return errors.New("maximum of 5 wishlists allowed")
+	}
 
 	wishlist := models.Wishlist{
 		Name:        req.Name,
@@ -82,13 +92,20 @@ func (s *wishlistService) AddBond(
 	bondISIN string,
 ) error {
 	_, err := s.wishlistRepo.GetByID(wishlistID)
-
 	if err != nil {
 		return err
 	}
 
-	_, err = s.bondRepo.GetByISIN(bondISIN)
+	count, err := s.wishlistRepo.GetBondCount(wishlistID)
+	if err != nil {
+		return err
+	}
 
+	if count >= 10 {
+		return errors.New("wishlist can contain at most 10 bonds")
+	}
+
+	_, err = s.bondRepo.GetByISIN(bondISIN)
 	if err != nil {
 		return err
 	}

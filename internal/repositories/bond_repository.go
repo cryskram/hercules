@@ -89,7 +89,7 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 	}
 
 	if filter.Page <= 0 {
-		filter.Page = 1
+		return nil, 0, fmt.Errorf("page must be greater than 0")
 	}
 
 	if filter.Limit <= 0 {
@@ -102,7 +102,6 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 
 	allowedSorts := map[string]string{
 		"yield":       "yield_pct",
-		"rating":      "rating",
 		"investment":  "min_investment",
 		"maturity":    "maturity_date",
 		"name":        "bond_name",
@@ -123,8 +122,33 @@ func (r *bondRepository) GetAll(filter dto.BondFilter) ([]models.Bond, int64, er
 		order = "ASC"
 	}
 
-	query = query.Order(fmt.Sprintf("%s %s", sortColumn, order))
-
+	if filter.Sort == "rating" {
+		ratingOrder := `
+			CASE rating
+				WHEN 'Sovereign' THEN 1
+				WHEN 'AAA' THEN 2
+				WHEN 'AA+' THEN 3
+				WHEN 'AA' THEN 4
+				WHEN 'AA-' THEN 5
+				WHEN 'A+' THEN 6
+				WHEN 'A' THEN 7
+				WHEN 'A-' THEN 8
+				WHEN 'BBB+' THEN 9
+				WHEN 'BBB' THEN 10
+				WHEN 'BBB-' THEN 11
+				WHEN 'BB+' THEN 12
+				WHEN 'BB' THEN 13
+				WHEN 'BB-' THEN 14
+				WHEN 'B+' THEN 15
+				WHEN 'B' THEN 16
+				WHEN 'B-' THEN 17
+				ELSE 999
+			END
+			`
+		query = query.Order(fmt.Sprintf("%s %s", ratingOrder, order))
+	} else {
+		query = query.Order(fmt.Sprintf("%s %s", sortColumn, order))
+	}
 	err := query.
 		Offset((filter.Page - 1) * filter.Limit).
 		Limit(filter.Limit).
